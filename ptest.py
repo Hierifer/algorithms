@@ -2,6 +2,7 @@ import json
 import os
 import eventlet
 import time
+import sys
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
@@ -24,14 +25,14 @@ def testWrap(f, input, timeout):
         return 'function run timeout'
   return decorated
 
-def ptest(func, funcPath, testcase):
+def ptest(funcPath, testcase):
   dict = {}
   # step1: read testcase
   with open(testcase, 'r') as f:
     dict = json.load(f)
   
   # step2: run tests
-  funcTest = getattr(getattr(__import__(funcPath), 'solution'), func)
+  funcTest = getattr(getattr(__import__(funcPath), 'solution'), dict['config']['funcname'])
 
   # step3: generate tests results
   acc = 0
@@ -47,11 +48,11 @@ def ptest(func, funcPath, testcase):
       print('params: ', test['params'])
       print('expect:',test['result'])
       print(FAIL+'answer: ',real,ENDC)
+      print()
 
     else:
       acc+=1
   
-  print()
   print()
   print('-------------------')
   print('time cost', time.time() - start, 's')
@@ -63,6 +64,10 @@ def ptest(func, funcPath, testcase):
 
   return 0
 
+
 cwd = os.getcwd()
 
-ptest('mmsearch', 'mm-search.solution' ,cwd+'/mm-search/testcases.json')
+if len(sys.argv) > 1:
+  ptest(sys.argv[1]+'.solution', cwd+'/'+sys.argv[1]+'/testcases.json')
+else:
+  ptest('mm-search.solution' ,cwd+'/mm-search/testcases.json')

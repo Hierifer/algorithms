@@ -1,5 +1,6 @@
 {
   "config": {
+    "funcname": "mmsearch",
     "timeout": 60
   },
   "tests": [
